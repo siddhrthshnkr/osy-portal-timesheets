@@ -644,18 +644,6 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   background-color: #f8f9fa;
 }
 
-.calendar-day.sick-leave {
-  background-color: #fff3cd;
-}
-
-.calendar-day.present {
-  background-color: #d4edda;
-}
-
-.calendar-day.partial {
-  background-color: #f8d7da;
-}
-
 .day-number {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
