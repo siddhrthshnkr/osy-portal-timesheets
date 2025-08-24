@@ -88,13 +88,13 @@
             </div>
             <div class="minutes-pills">
               <div v-if="day.entry && day.entry.billable_minutes" class="minutes-pill billable">
-                B: {{ formatMinutesToHours(day.entry.billable_minutes) }}
+                Billable: {{ formatMinutesToHours(day.entry.billable_minutes) }}
               </div>
               <div v-if="day.entry && day.entry.total_minutes" class="minutes-pill total">
-                T: {{ formatMinutesToHours(day.entry.total_minutes) }}
+                Total: {{ formatMinutesToHours(day.entry.total_minutes) }}
               </div>
               <div v-if="day.entry && day.entry.unpaid_minutes" class="minutes-pill unpaid">
-                U: {{ formatMinutesToHours(day.entry.unpaid_minutes) }}
+                Unpaid: {{ formatMinutesToHours(day.entry.unpaid_minutes) }}
               </div>
             </div>
           </div>
@@ -134,24 +134,29 @@
     <!-- Mobile Events -->
     <div class="mobile-events" v-if="selectedMobileDay">
       <div class="mobile-event-card" v-if="selectedMobileDay.entry">
-        <div :class="`mobile-event-indicator ${getStatusClass(selectedMobileDay.entry.zoho_people_entry_status)}`"></div>
         <div class="mobile-event-title">{{ getStatusDisplay(selectedMobileDay.entry.zoho_people_entry_status) }}</div>
-        <div class="mobile-event-description">
-          {{ selectedMobileDay.entry.time_start && selectedMobileDay.entry.time_end ? 
-            `Shift: ${formatTime(selectedMobileDay.entry.shift_start)} - ${formatTime(selectedMobileDay.entry.shift_end)}` : 
-            'No time data available'
-          }}
-        </div>
-        <div class="mobile-event-time">
+        <div class="time-info">
           {{ selectedMobileDay.entry.time_start && selectedMobileDay.entry.time_end ? 
             `Actual: ${formatTime(selectedMobileDay.entry.time_start)} - ${formatTime(selectedMobileDay.entry.time_end)}` : 
             'No time data'
           }}
         </div>
-        <div class="mobile-event-minutes">
-          Total: {{ selectedMobileDay.entry.total_minutes ? formatMinutesToHours(selectedMobileDay.entry.total_minutes) : '0:00' }} | 
-          Billable: {{ selectedMobileDay.entry.billable_minutes ? formatMinutesToHours(selectedMobileDay.entry.billable_minutes) : '0:00' }} | 
-          Unpaid: {{ selectedMobileDay.entry.unpaid_minutes ? formatMinutesToHours(selectedMobileDay.entry.unpaid_minutes) : '0:00' }}
+        <div class="time-info">
+          {{ selectedMobileDay.entry.shift_start && selectedMobileDay.entry.shift_end ? 
+            `Shift: ${formatTime(selectedMobileDay.entry.shift_start)} - ${formatTime(selectedMobileDay.entry.shift_end)}` : 
+            ''
+          }}
+        </div>
+        <div class="minutes-pills">
+            <div v-if="selectedMobileDay.entry && selectedMobileDay.entry.billable_minutes" class="minutes-pill billable">
+              Billable: {{ formatMinutesToHours(selectedMobileDay.entry.billable_minutes) }}
+            </div>
+            <div v-if="selectedMobileDay.entry && selectedMobileDay.entry.total_minutes" class="minutes-pill total">
+              Total: {{ formatMinutesToHours(selectedMobileDay.entry.total_minutes) }}
+            </div>
+            <div v-if="selectedMobileDay.entry && selectedMobileDay.entry.unpaid_minutes" class="minutes-pill unpaid">
+              Unpaid: {{ formatMinutesToHours(selectedMobileDay.entry.unpaid_minutes) }}
+            </div>
         </div>
       </div>
       <div class="mobile-event-card" v-else>
@@ -414,6 +419,7 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   padding: 65px 88px 88px 88px;
   max-width: 1400px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* Header Section */
@@ -576,7 +582,7 @@ watch(() => props.filters.calendar_month, (newMonth) => {
 .calendar {
   background-color: #ffffff;
   border-radius: 8px;
-  border: 1px solid #e8e8e8;
+  border: 1px solid #d0d0d0;
   overflow: hidden;
   box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.18);
 }
@@ -594,20 +600,11 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   font-weight: 500;
   font-size: 16px;
   color: #969696;
-  border-right: 2px solid #d0d0d0;
-  border-bottom: 2px solid #d0d0d0;
+  border-bottom: 1px solid #d0d0d0;
 }
 
-.calendar-day-header:last-child {
-  border-right: none;
-}
-
-.calendar-day-header:first-child {
-  border-top-left-radius: 8px;
-}
-
-.calendar-day-header:last-child {
-  border-top-right-radius: 8px;
+.calendar-day-header:not(:last-child) {
+  border-right: 1px solid #d0d0d0;
 }
 
 .calendar-grid {
@@ -618,17 +615,20 @@ watch(() => props.filters.calendar_month, (newMonth) => {
 .calendar-day {
   min-height: 192.6px;
   padding: 12px;
-  border-right: 2px solid #d0d0d0;
-  border-bottom: 2px solid #d0d0d0;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  border-bottom: 1px solid #d0d0d0;
+}
+.calendar-day:not(:nth-child(7n)) {
+  border-right: 1px solid #d0d0d0;
 }
 
-.calendar-day:nth-child(7n) {
-  border-right: none;
+.calendar-grid > .calendar-day:nth-last-child(-n+7) {
+    border-bottom: none;
 }
+
 
 .calendar-day.empty {
   background-color: #f8f8f8;
@@ -654,12 +654,12 @@ watch(() => props.filters.calendar_month, (newMonth) => {
 }
 
 .tag {
-  padding: 3px 4px;
+  padding: 3px 8px;
   border-radius: 4px;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 14px;
-  white-space: nowrap;
+  text-align: center;
 }
 
 .tag.present {
@@ -691,17 +691,18 @@ watch(() => props.filters.calendar_month, (newMonth) => {
 
 .minutes-pills {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 4px;
-  margin-top: 4px;
+  margin-top: auto;
+  padding-top: 8px;
 }
 
 .minutes-pill {
-  padding: 2px 5px;
-  border-radius: 10px;
-  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
   font-weight: 500;
-  white-space: nowrap;
+  text-align: center;
 }
 
 .minutes-pill.billable {
@@ -828,8 +829,9 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   border: 1px solid #e8e8e8;
   padding: 16px;
   margin-bottom: 12px;
-  position: relative;
-  border-left: 4px solid #014c85;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .mobile-event-title {
@@ -837,56 +839,10 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   font-weight: 600;
   font-size: 16px;
   color: #222b45;
-  margin-bottom: 4px;
-}
-
-.mobile-event-description {
-  font-family: 'SF UI Text', sans-serif;
-  font-weight: 400;
-  font-size: 12px;
-  color: #8f9bb3;
-  margin-bottom: 8px;
-}
-
-.mobile-event-time {
-  font-family: 'SF UI Text', sans-serif;
-  font-weight: 600;
-  font-size: 12px;
-  color: #8f9bb3;
-}
-
-.mobile-event-minutes {
-  font-family: 'SF UI Text', sans-serif;
-  font-weight: 400;
-  font-size: 11px;
-  color: #8f9bb3;
-  margin-top: 4px;
-}
-
-.mobile-event-indicator {
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.mobile-event-indicator.present {
-  background-color: #155724;
-}
-
-.mobile-event-indicator.sick-leave {
-  background-color: #856404;
-}
-
-.mobile-event-indicator.weekend {
-  background-color: #6c757d;
-}
-
-.mobile-event-indicator.partial {
-  background-color: #721c24;
+  text-align: center;
+  padding: 4px;
+  border-radius: 4px;
+  background-color: #e9ecef;
 }
 
 /* Responsive Design */
