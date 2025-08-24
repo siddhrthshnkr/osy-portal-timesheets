@@ -76,26 +76,33 @@
         >
           <div class="day-number">{{ day.isCurrentMonth ? day.dayNumber : '' }}</div>
           <div class="day-content" v-if="day.isCurrentMonth">
-            <div v-if="day.holiday" class="info-pill holiday-pill">{{ day.holiday.name }}</div>
-            <div v-if="day.entry" :class="`info-pill status-pill ${getStatusClass(day.entry.zoho_people_entry_status)}`">
+            <div v-if="day.holiday" class="status-pill holiday-pill">{{ day.holiday.name }}</div>
+            <div v-if="day.entry" :class="`status-pill ${getStatusClass(day.entry.zoho_people_entry_status)}`">
               {{ getStatusDisplay(day.entry.zoho_people_entry_status) }}
             </div>
-            <div v-if="day.entry && day.entry.time_start && day.entry.time_end" class="info-pill time-pill">
-              Time: {{ formatTime(day.entry.time_start) }} - {{ formatTime(day.entry.time_end) }}
-            </div>
-            <div v-if="day.entry && day.entry.shift_start && day.entry.shift_end" class="info-pill shift-pill">
-              Shift: {{ formatTime(day.entry.shift_start) }} - {{ formatTime(day.entry.shift_end) }}
-            </div>
-            <div class="minutes-pills">
-              <div v-if="day.entry && day.entry.billable_minutes" class="info-pill billable-pill">
-                Billable: {{ formatMinutesToHours(day.entry.billable_minutes) }}
-              </div>
-              <div v-if="day.entry && day.entry.total_minutes" class="info-pill total-pill">
-                Total: {{ formatMinutesToHours(day.entry.total_minutes) }}
-              </div>
-              <div v-if="day.entry && day.entry.unpaid_minutes" class="info-pill unpaid-pill">
-                Unpaid: {{ formatMinutesToHours(day.entry.unpaid_minutes) }}
-              </div>
+            
+            <div class="day-details" v-if="day.entry">
+                <div class="detail-row">
+                    <span class="detail-label">Time:</span>
+                    <span class="detail-value">{{ formatTime(day.entry.time_start) }} - {{ formatTime(day.entry.time_end) }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Shift:</span>
+                    <span class="detail-value">{{ formatTime(day.entry.shift_start) }} - {{ formatTime(day.entry.shift_end) }}</span>
+                </div>
+                <hr class="detail-divider" />
+                <div class="detail-row">
+                    <span class="detail-label">Billable:</span>
+                    <span class="detail-value billable-color">{{ formatMinutesToHours(day.entry.billable_minutes) }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Total:</span>
+                    <span class="detail-value total-color">{{ formatMinutesToHours(day.entry.total_minutes) }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Unpaid:</span>
+                    <span class="detail-value unpaid-color">{{ formatMinutesToHours(day.entry.unpaid_minutes) }}</span>
+                </div>
             </div>
           </div>
         </div>
@@ -133,29 +140,32 @@
 
     <!-- Mobile Events -->
     <div class="mobile-events" v-if="selectedMobileDay">
-      <div class="mobile-event-card" v-if="selectedMobileDay.entry">
-        <div class="mobile-event-title">{{ getStatusDisplay(selectedMobileDay.entry.zoho_people_entry_status) }}</div>
-        <div class="time-info">
-          {{ selectedMobileDay.entry.time_start && selectedMobileDay.entry.time_end ? 
-            `Actual: ${formatTime(selectedMobileDay.entry.time_start)} - ${formatTime(selectedMobileDay.entry.time_end)}` : 
-            'No time data'
-          }}
+      <div class="mobile-event-card" v-if="selectedMobileDay.entry || selectedMobileDay.holiday">
+        <div v-if="selectedMobileDay.holiday" class="status-pill holiday-pill">{{ selectedMobileDay.holiday.name }}</div>
+        <div v-if="selectedMobileDay.entry" :class="`status-pill ${getStatusClass(selectedMobileDay.entry.zoho_people_entry_status)}`">
+            {{ getStatusDisplay(selectedMobileDay.entry.zoho_people_entry_status) }}
         </div>
-        <div class="time-info">
-          {{ selectedMobileDay.entry.shift_start && selectedMobileDay.entry.shift_end ? 
-            `Shift: ${formatTime(selectedMobileDay.entry.shift_start)} - ${formatTime(selectedMobileDay.entry.shift_end)}` : 
-            ''
-          }}
-        </div>
-        <div class="minutes-pills">
-            <div v-if="selectedMobileDay.entry && selectedMobileDay.entry.billable_minutes" class="info-pill billable-pill">
-              Billable: {{ formatMinutesToHours(selectedMobileDay.entry.billable_minutes) }}
+        <div class="day-details" v-if="selectedMobileDay.entry">
+            <div class="detail-row">
+                <span class="detail-label">Time:</span>
+                <span class="detail-value">{{ formatTime(selectedMobileDay.entry.time_start) }} - {{ formatTime(selectedMobileDay.entry.time_end) }}</span>
             </div>
-            <div v-if="selectedMobileDay.entry && selectedMobileDay.entry.total_minutes" class="info-pill total-pill">
-              Total: {{ formatMinutesToHours(selectedMobileDay.entry.total_minutes) }}
+            <div class="detail-row">
+                <span class="detail-label">Shift:</span>
+                <span class="detail-value">{{ formatTime(selectedMobileDay.entry.shift_start) }} - {{ formatTime(selectedMobileDay.entry.shift_end) }}</span>
             </div>
-            <div v-if="selectedMobileDay.entry && selectedMobileDay.entry.unpaid_minutes" class="info-pill unpaid-pill">
-              Unpaid: {{ formatMinutesToHours(selectedMobileDay.entry.unpaid_minutes) }}
+            <hr class="detail-divider" />
+            <div class="detail-row">
+                <span class="detail-label">Billable:</span>
+                <span class="detail-value billable-color">{{ formatMinutesToHours(selectedMobileDay.entry.billable_minutes) }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Total:</span>
+                <span class="detail-value total-color">{{ formatMinutesToHours(selectedMobileDay.entry.total_minutes) }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Unpaid:</span>
+                <span class="detail-value unpaid-color">{{ formatMinutesToHours(selectedMobileDay.entry.unpaid_minutes) }}</span>
             </div>
         </div>
       </div>
@@ -643,6 +653,7 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   font-weight: 500;
   font-size: 21px;
   color: #000000;
+  text-align: left;
 }
 
 .day-content {
@@ -654,13 +665,14 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   text-align: left;
 }
 
-.info-pill {
+.status-pill {
   padding: 3px 8px;
   border-radius: 4px;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 12px;
-  text-align: left;
+  text-align: center;
+  margin-bottom: 8px;
 }
 
 .status-pill.present {
@@ -683,37 +695,44 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   color: #721c24;
 }
 
-.time-pill {
-  background-color: #D7CFF5; /* Lavender Mist */
-}
-
-.shift-pill {
-  background-color: #FFD8B1; /* Soft Peach */
-}
-
-.minutes-pills {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 4px;
-}
-
-.billable-pill {
-  background-color: #B6E3B5; /* Emerald */
-}
-
-.total-pill {
-  background-color: #F6E2B3; /* Sand */
-}
-
-.unpaid-pill {
-  background-color: #F7C6C7; /* Rose */
-}
-
 .holiday-pill {
   background-color: #A3CBE7; /* Sky Blue */
   color: #0c5460;
 }
+
+.day-details {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: auto;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.detail-label {
+    color: #666;
+}
+
+.detail-value {
+    font-weight: 500;
+    color: #333;
+}
+
+.detail-divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 4px 0;
+}
+
+.billable-color { color: #2a783b; }
+.total-color { color: #856404; }
+.unpaid-color { color: #721c24; }
+
 
 /* Mobile Calendar Styles */
 .mobile-calendar {
@@ -854,11 +873,6 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   
   .day-number {
     font-size: 16px;
-  }
-  
-  .info-pill {
-    font-size: 11px;
-    padding: 2px 3px;
   }
 }
 
