@@ -277,14 +277,19 @@ const allEntries = computed(() => {
 })
 
 const calendarDays = computed(() => {
-  const firstDay = dayjs().year(currentYear.value).month(currentMonth.value).startOf('month')
-  const startDate = firstDay.startOf('week').add(1, 'day') // Start on Monday
+  const firstDayOfMonth = dayjs().year(currentYear.value).month(currentMonth.value).startOf('month')
+  const lastDayOfMonth = dayjs().year(currentYear.value).month(currentMonth.value).endOf('month')
+
+  const startDate = firstDayOfMonth.startOf('week').add(1, 'day') // Start on Monday
+  const endDate = lastDayOfMonth.endOf('week').add(1, 'day') // End on Sunday
   
+  const daysInGrid = endDate.diff(startDate, 'day') + 1
+
   const calendar: DayData[] = []
   let currentDate = startDate
   
-  // Generate 42 days (6 weeks)
-  for (let i = 0; i < 42; i++) {
+  // Generate days to fill the grid for the current month's weeks
+  for (let i = 0; i < daysInGrid; i++) {
     const dayData: DayData = {
       date: currentDate.toDate(),
       dayNumber: currentDate.date(),
