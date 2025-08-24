@@ -76,24 +76,24 @@
         >
           <div class="day-number">{{ day.isCurrentMonth ? day.dayNumber : '' }}</div>
           <div class="day-content" v-if="day.isCurrentMonth">
-            <div v-if="day.holiday" class="holiday-badge">{{ day.holiday.name }}</div>
-            <div v-if="day.entry" :class="`tag ${getStatusClass(day.entry.zoho_people_entry_status)}`">
+            <div v-if="day.holiday" class="info-pill holiday-pill">{{ day.holiday.name }}</div>
+            <div v-if="day.entry" :class="`info-pill status-pill ${getStatusClass(day.entry.zoho_people_entry_status)}`">
               {{ getStatusDisplay(day.entry.zoho_people_entry_status) }}
             </div>
-            <div v-if="day.entry && day.entry.time_start && day.entry.time_end" class="time-info">
-              {{ formatTime(day.entry.time_start) }} - {{ formatTime(day.entry.time_end) }}
+            <div v-if="day.entry && day.entry.time_start && day.entry.time_end" class="info-pill time-pill">
+              Time: {{ formatTime(day.entry.time_start) }} - {{ formatTime(day.entry.time_end) }}
             </div>
-            <div v-if="day.entry && day.entry.shift_start && day.entry.shift_end" class="time-info">
+            <div v-if="day.entry && day.entry.shift_start && day.entry.shift_end" class="info-pill shift-pill">
               Shift: {{ formatTime(day.entry.shift_start) }} - {{ formatTime(day.entry.shift_end) }}
             </div>
             <div class="minutes-pills">
-              <div v-if="day.entry && day.entry.billable_minutes" class="minutes-pill billable">
+              <div v-if="day.entry && day.entry.billable_minutes" class="info-pill billable-pill">
                 Billable: {{ formatMinutesToHours(day.entry.billable_minutes) }}
               </div>
-              <div v-if="day.entry && day.entry.total_minutes" class="minutes-pill total">
+              <div v-if="day.entry && day.entry.total_minutes" class="info-pill total-pill">
                 Total: {{ formatMinutesToHours(day.entry.total_minutes) }}
               </div>
-              <div v-if="day.entry && day.entry.unpaid_minutes" class="minutes-pill unpaid">
+              <div v-if="day.entry && day.entry.unpaid_minutes" class="info-pill unpaid-pill">
                 Unpaid: {{ formatMinutesToHours(day.entry.unpaid_minutes) }}
               </div>
             </div>
@@ -148,13 +148,13 @@
           }}
         </div>
         <div class="minutes-pills">
-            <div v-if="selectedMobileDay.entry && selectedMobileDay.entry.billable_minutes" class="minutes-pill billable">
+            <div v-if="selectedMobileDay.entry && selectedMobileDay.entry.billable_minutes" class="info-pill billable-pill">
               Billable: {{ formatMinutesToHours(selectedMobileDay.entry.billable_minutes) }}
             </div>
-            <div v-if="selectedMobileDay.entry && selectedMobileDay.entry.total_minutes" class="minutes-pill total">
+            <div v-if="selectedMobileDay.entry && selectedMobileDay.entry.total_minutes" class="info-pill total-pill">
               Total: {{ formatMinutesToHours(selectedMobileDay.entry.total_minutes) }}
             </div>
-            <div v-if="selectedMobileDay.entry && selectedMobileDay.entry.unpaid_minutes" class="minutes-pill unpaid">
+            <div v-if="selectedMobileDay.entry && selectedMobileDay.entry.unpaid_minutes" class="info-pill unpaid-pill">
               Unpaid: {{ formatMinutesToHours(selectedMobileDay.entry.unpaid_minutes) }}
             </div>
         </div>
@@ -348,10 +348,6 @@ const getDayClasses = (day: DayData): string[] => {
   
   if (!day.isCurrentMonth) {
     classes.push('empty')
-  }
-  
-  if (day.holiday) {
-    classes.push('holiday')
   }
   
   if (day.entry) {
@@ -642,10 +638,6 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   background-color: #f8f9fa;
 }
 
-.calendar-day.holiday {
-  background-color: #fff0db; /* Pastel Orange */
-}
-
 .day-number {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
@@ -659,88 +651,68 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   gap: 4px;
   flex: 1;
   margin-top: 8px;
+  text-align: left;
 }
 
-.tag {
+.info-pill {
   padding: 3px 8px;
   border-radius: 4px;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  font-size: 14px;
-  text-align: center;
+  font-size: 12px;
+  text-align: left;
 }
 
-.tag.present {
-  background-color: #d4edda;
+.status-pill.present {
+  background-color: #AEEBCB; /* Mint Green */
   color: #155724;
 }
 
-.tag.sick-leave {
+.status-pill.sick-leave {
   background-color: #fff3cd;
   color: #856404;
 }
 
-.tag.weekend {
+.status-pill.weekend {
   background-color: #e2e3e5;
   color: #6c757d;
 }
 
-.tag.partial {
+.status-pill.partial {
   background-color: #f8d7da;
   color: #721c24;
 }
 
-.time-info {
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  color: #666;
-  margin-top: 2px;
+.time-pill {
+  background-color: #D7CFF5; /* Lavender Mist */
+}
+
+.shift-pill {
+  background-color: #FFD8B1; /* Soft Peach */
 }
 
 .minutes-pills {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-top: auto;
-  padding-top: 8px;
+  margin-top: 4px;
 }
 
-.minutes-pill {
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  text-align: center;
+.billable-pill {
+  background-color: #B6E3B5; /* Emerald */
 }
 
-.minutes-pill.billable {
-  background-color: #e0f2fe; /* pastel blue */
+.total-pill {
+  background-color: #F6E2B3; /* Sand */
+}
+
+.unpaid-pill {
+  background-color: #F7C6C7; /* Rose */
+}
+
+.holiday-pill {
+  background-color: #A3CBE7; /* Sky Blue */
   color: #0c5460;
-}
-
-.minutes-pill.total {
-  background-color: #e2e3fe; /* pastel purple */
-  color: #495057;
-}
-
-.minutes-pill.unpaid {
-  background-color: #fff0db; /* pastel orange */
-  color: #856404;
-}
-
-.holiday-badge {
-  font-family: 'Inter', sans-serif;
-  font-size: 9px;
-  color: #ffffff;
-  font-weight: 600;
-  margin-top: 2px;
-  padding: 1px 3px;
-  background-color: #dc3545;
-  border-radius: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
 }
 
 /* Mobile Calendar Styles */
@@ -806,7 +778,7 @@ watch(() => props.filters.calendar_month, (newMonth) => {
 }
 
 .mobile-day.has-event.present .mobile-status {
-  background-color: #d4edda;
+  background-color: #AEEBCB;
   color: #155724;
 }
 
@@ -884,7 +856,7 @@ watch(() => props.filters.calendar_month, (newMonth) => {
     font-size: 16px;
   }
   
-  .tag {
+  .info-pill {
     font-size: 11px;
     padding: 2px 3px;
   }
