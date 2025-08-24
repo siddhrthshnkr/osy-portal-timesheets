@@ -740,22 +740,23 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   background-color: #ffffff;
   border-radius: 8px;
   border: 1px solid #e8e8e8;
-  padding: 20px;
-  margin-top: 20px;
+  padding: 16px;
+  margin: 20px auto 0 auto;
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.15);
+  max-width: 600px;
 }
 
 .mobile-calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  gap: clamp(4px, 1.5vw, 8px);
 }
 
 .mobile-day-header {
   text-align: center;
   font-family: 'SF UI Text', sans-serif;
   font-weight: 500;
-  font-size: 13px;
+  font-size: clamp(11px, 3vw, 14px);
   color: #8f9bb3;
   padding: 8px 0;
 }
@@ -770,7 +771,7 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   border-radius: 10px;
   font-family: 'SF UI Text', sans-serif;
   font-weight: 500;
-  font-size: 15px;
+  font-size: clamp(13px, 3.5vw, 18px);
   color: #222b45;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -819,7 +820,8 @@ watch(() => props.filters.calendar_month, (newMonth) => {
 /* Mobile Event Cards */
 .mobile-events {
   display: none;
-  margin-top: 20px;
+  margin: 20px auto 0 auto;
+  max-width: 600px;
 }
 
 .mobile-event-card {
@@ -964,20 +966,6 @@ watch(() => props.filters.calendar_month, (newMonth) => {
     display: block;
   }
   
-  .mobile-calendar-grid {
-    gap: 4px;
-  }
-  
-  .mobile-day-header {
-    font-size: 13px;
-    padding: 6px 0;
-  }
-  
-  .mobile-day {
-    font-size: 15px;
-    min-height: 40px;
-  }
-  
   /* Show mobile events for selected day */
   .mobile-events {
     display: block;
@@ -1014,17 +1002,7 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   }
   
   .mobile-calendar {
-    padding: 16px;
-  }
-  
-  .mobile-day {
-    min-height: 36px;
-    font-size: 14px;
-  }
-  
-  .mobile-day-header {
-    font-size: 12px;
-    padding: 4px 0;
+    padding: 12px;
   }
 }
 </style>
