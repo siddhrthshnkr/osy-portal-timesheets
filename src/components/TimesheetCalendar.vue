@@ -86,14 +86,16 @@
             <div v-if="day.entry && day.entry.shift_start && day.entry.shift_end" class="time-info">
               Shift: {{ formatTime(day.entry.shift_start) }} - {{ formatTime(day.entry.shift_end) }}
             </div>
-            <div v-if="day.entry && day.entry.billable_minutes" class="minutes-info">
-              Billable: {{ formatMinutesToHours(day.entry.billable_minutes) }}
-            </div>
-            <div v-if="day.entry && day.entry.total_minutes" class="minutes-info">
-              Total: {{ formatMinutesToHours(day.entry.total_minutes) }}
-            </div>
-            <div v-if="day.entry && day.entry.unpaid_minutes" class="minutes-info">
-              Unpaid: {{ formatMinutesToHours(day.entry.unpaid_minutes) }}
+            <div class="minutes-pills">
+              <div v-if="day.entry && day.entry.billable_minutes" class="minutes-pill billable">
+                B: {{ formatMinutesToHours(day.entry.billable_minutes) }}
+              </div>
+              <div v-if="day.entry && day.entry.total_minutes" class="minutes-pill total">
+                T: {{ formatMinutesToHours(day.entry.total_minutes) }}
+              </div>
+              <div v-if="day.entry && day.entry.unpaid_minutes" class="minutes-pill unpaid">
+                U: {{ formatMinutesToHours(day.entry.unpaid_minutes) }}
+              </div>
             </div>
           </div>
         </div>
@@ -102,22 +104,6 @@
 
     <!-- Mobile Calendar -->
     <div class="mobile-calendar">
-      <div class="mobile-calendar-header">
-        <div class="mobile-month-selector">
-          <button class="mobile-prev-month" @click="navigateMonth('prev')">
-            <svg viewBox="0 0 24 24">
-              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-            </svg>
-          </button>
-          <div class="mobile-month-display">{{ currentMonthDisplay }}</div>
-          <button class="mobile-next-month" @click="navigateMonth('next')">
-            <svg viewBox="0 0 24 24">
-              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-      
       <div class="mobile-calendar-grid">
         <div class="mobile-day-header">Mon</div>
         <div class="mobile-day-header">Tue</div>
@@ -178,6 +164,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import dayjs from 'dayjs'
+import isoWeek from 'dayjs/plugin/isoWeek'
+
+dayjs.extend(isoWeek)
 
 // Types
 interface Entry {
@@ -280,8 +269,8 @@ const calendarDays = computed(() => {
   const firstDayOfMonth = dayjs().year(currentYear.value).month(currentMonth.value).startOf('month')
   const lastDayOfMonth = dayjs().year(currentYear.value).month(currentMonth.value).endOf('month')
 
-  const startDate = firstDayOfMonth.startOf('week').add(1, 'day') // Start on Monday
-  const endDate = lastDayOfMonth.endOf('week').add(1, 'day') // End on Sunday
+  const startDate = firstDayOfMonth.startOf('isoWeek')
+  const endDate = lastDayOfMonth.endOf('isoWeek')
   
   const daysInGrid = endDate.diff(startDate, 'day') + 1
 
@@ -700,11 +689,34 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   margin-top: 2px;
 }
 
-.minutes-info {
-  font-family: 'Inter', sans-serif;
+.minutes-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.minutes-pill {
+  padding: 2px 5px;
+  border-radius: 10px;
   font-size: 10px;
-  color: #888;
-  margin-top: 2px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.minutes-pill.billable {
+  background-color: #e0f2fe; /* pastel blue */
+  color: #0c5460;
+}
+
+.minutes-pill.total {
+  background-color: #e2e3fe; /* pastel purple */
+  color: #495057;
+}
+
+.minutes-pill.unpaid {
+  background-color: #fce8e6; /* pastel red */
+  color: #721c24;
 }
 
 .holiday-badge {
@@ -731,52 +743,6 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   padding: 20px;
   margin-top: 20px;
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.15);
-}
-
-.mobile-calendar-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.mobile-month-selector {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.mobile-month-selector button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.2s ease;
-}
-
-.mobile-month-selector button:hover {
-  opacity: 0.7;
-}
-
-.mobile-month-selector button svg {
-  width: 20px;
-  height: 20px;
-  fill: #0a0a0a;
-}
-
-.mobile-month-display {
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 28px;
-  color: #0a0a0a;
-  letter-spacing: -0.2px;
-  min-width: 120px;
-  text-align: center;
 }
 
 .mobile-calendar-grid {
@@ -1046,20 +1012,6 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   /* Show mobile calendar */
   .mobile-calendar {
     display: block;
-  }
-  
-  .mobile-calendar-header {
-    margin-bottom: 16px;
-  }
-  
-  .mobile-month-selector {
-    gap: 16px;
-  }
-  
-  .mobile-month-display {
-    font-size: 20px;
-    line-height: 28px;
-    letter-spacing: -0.2px;
   }
   
   .mobile-calendar-grid {
