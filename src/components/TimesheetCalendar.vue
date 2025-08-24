@@ -350,6 +350,10 @@ const getDayClasses = (day: DayData): string[] => {
     classes.push('empty')
   }
   
+  if (day.holiday) {
+    classes.push('holiday')
+  }
+  
   if (day.entry) {
     classes.push(getStatusClass(day.entry.zoho_people_entry_status))
   }
@@ -638,6 +642,10 @@ watch(() => props.filters.calendar_month, (newMonth) => {
   background-color: #f8f9fa;
 }
 
+.calendar-day.holiday {
+  background-color: #fff0db; /* Pastel Orange */
+}
+
 .day-number {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
@@ -684,7 +692,7 @@ watch(() => props.filters.calendar_month, (newMonth) => {
 
 .time-info {
   font-family: 'Inter', sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   color: #666;
   margin-top: 2px;
 }
@@ -716,8 +724,8 @@ watch(() => props.filters.calendar_month, (newMonth) => {
 }
 
 .minutes-pill.unpaid {
-  background-color: #fce8e6; /* pastel red */
-  color: #721c24;
+  background-color: #fff0db; /* pastel orange */
+  color: #856404;
 }
 
 .holiday-badge {
